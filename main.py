@@ -77,6 +77,7 @@ def knapsack(filename):
 def main():
     parser = argparse.ArgumentParser(description="Solve knapsack problem using Nemhauser and Ullmann algorithm.")
     parser.add_argument("csv_filename", metavar="FNAME", help="csv filename containing items weights and values.")
+    parser.add_argument("weight_limit", type=float, help="Maximum weight of knapsack in kg")
     args = parser.parse_args()
     knapsack(args.csv_filename)
 
