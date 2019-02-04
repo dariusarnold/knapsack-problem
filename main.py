@@ -18,6 +18,34 @@ class Item:
         return f"Item(id={self.id}, weight={self.weight}, profit={self.profit})"
 
 
+class Point:
+    def __init__(self, weight=0., profit=0.):
+        """
+        Represent a point in the weight/profit diagram. A point is created by a combination of items.
+        The IDs of the items used to create this point is saved in item_ids
+        :param weight: Sum of the weights of all items in this set
+        :param profit: Sum of the profits of all items in this set
+        """
+        self.weight = weight
+        self.profit = profit
+        self.item_ids = []
+
+    def __add__(self, item):
+        """
+        Add an item to this point by adding its weight and profit to the weight and profit
+        of the point and also saving its id.
+        :param item:
+        :return:
+        """
+        moved_point = Point(self.weight+item.weight, self.profit+item.profit)
+        moved_point.item_ids = self.item_ids.copy()
+        moved_point.item_ids.append(item.id)
+        return moved_point
+
+    def __repr__(self):
+        return f"Point(weight={self.weight}, profit={self.profit}, items={self.item_ids})"
+
+
 def read_file(filename):
     """
     Read file and return list of items
