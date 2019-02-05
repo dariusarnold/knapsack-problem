@@ -8,6 +8,7 @@ import pprint
 class Item:
     def __init__(self, id, weight, profit):
         """
+        Represent one item that can be put into the knapsack.
         :param id: Row of item in csv, int
         """
         self.id = id
@@ -71,31 +72,35 @@ def read_file(filename):
 
 def merge(old_list, new_list):
     """
+    Return the index of the first item that satisfies the criterion in list_. If no item satisfies the criterion,
+    the default value is returned
+    :param list_: Iterable of items to search in
+    :param criterion: Function that takes one element and compares true or false
+    :param default: Default value to return if no item matches criterion
+    :return: Index of first item for which criterion returns true
+    """
+
+    def find_larger(list_, value, default=None):
+    """
+    Return the index of the first item in list__ whose profit is larger than value
+    """
+
+        def find(list_, criterion, default):
+    """
+    Return the index of the item in the list whose weight is closest to, but smaller than value
+    """
+    return find(list_, lambda x: x.weight > value, default) - 1
+
+            return next((index for index, el in enumerate(list_) if criterion(el)), default)
+
+        return find(list_, lambda x: x.profit > value, default)
+    """
     Takes two lists of pareto-optimal points and merges them, discarding points that are dominated by others.
     Point A is dominated by point B if B achieves a larger profit with the same or less weight than A.
     :param old_list: Previous list of pareto optimal points
     :param new_list: New List of pareto optimal points, where one item was added to every point from the old list
     :return: Merged list excluding points that are dominated by others
     """
-
-    def find_larger(list_, value, default=None):
-        """
-        Return the index of the first item in list__ whose profit is larger than value
-        :param list_:
-        :param value:
-        :return:
-        """
-
-        def find(list_, criterion, default):
-            """
-            Return the index of the first item that satisfies the criterion in list_
-            :param list_: Iterable of items to search in
-            :param criterion: Function that takes one element and compares true or false
-            :return: Index of irst item for which criterion returns true
-            """
-            return next((index for index, el in enumerate(list_) if criterion(el)), default)
-
-        return find(list_, lambda x: x.profit > value, default)
 
     merged_list = []
     profit_max = -1
@@ -120,11 +125,17 @@ def merge(old_list, new_list):
 
 
 def knapsack(items, weight_limit):
+    """
+    Solve 01-knapsack problem for given list of items and weight limit.
+    :param items: list of possible items to chose from. No multiples of one item will be taken.
+    :param weight_limit: Maximim weight to fill knapsack to
+    :return: Ids of items in the list of items, starting at 1 for the first item in the list
+    """
     # create first pareto-optimal list which contains no items
     content = [Point()]
     # add items to possible pareto optimal sets one by one, but merge by only keeping the optimal points
     for item in items:
-        content_next = [p + item for p in content]
+        # filter out item combinations that lie above the weight limit
         content = merge(content, content_next)
     pprint.pprint(content)
 
